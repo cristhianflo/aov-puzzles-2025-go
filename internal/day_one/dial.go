@@ -1,5 +1,9 @@
 package day_one
 
+import (
+	"math"
+)
+
 type Dial struct {
 	value int
 	size  int
@@ -22,4 +26,15 @@ func (c *Dial) Set(v int) {
 
 func (c *Dial) Rotate(delta int) {
 	c.value = ((c.value+delta)%c.size + c.size) % c.size
+}
+
+func (c *Dial) CalculateRotations(v int, direction string) int {
+	base := c.value
+
+	if direction == "L" && c.value != 0 {
+		base = c.size - c.value
+	}
+	sum := base + v
+
+	return int(math.Abs(float64(sum)) / float64(c.size))
 }
