@@ -13,8 +13,7 @@ type Range struct {
 }
 
 type RangeList struct {
-	Ranges     []Range
-	InvalidIDs int
+	Ranges []Range
 }
 
 func NewRangeList(path string) (*RangeList, error) {
@@ -56,7 +55,6 @@ func NewRangeList(path string) (*RangeList, error) {
 	}
 
 	return &RangeList{
-		Ranges:     numberRanges,
-		InvalidIDs: 0,
+		Ranges: numberRanges,
 	}, nil
 }

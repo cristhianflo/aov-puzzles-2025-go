@@ -12,7 +12,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	sum := day_two.PartOne(rangeList)
+	sum := day_two.PartTwo(rangeList)
 
 	fmt.Printf("The sum of the invalid IDs is: %d\n", sum)
 }
