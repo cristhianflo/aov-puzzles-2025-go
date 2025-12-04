@@ -12,7 +12,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	joltage := day_three.PartOne(grid)
+	joltage := day_three.PartTwo(grid)
 
 	fmt.Printf("The total output joltage is: %d\n", joltage)
 }
