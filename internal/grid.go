@@ -46,3 +46,24 @@ func LoadGrid(path string) (*Grid, error) {
 func (g *Grid) Row(r int) []rune {
 	return g.Data[r]
 }
+
+func (g *Grid) InBounds(row, col int) bool {
+	return row >= 0 && row < g.Rows && col >= 0 && col < g.Cols
+}
+
+func (g *Grid) Neighbors8(row, col int) [][2]int {
+	dirs := [][2]int{
+		{-1, -1}, {-1, 0}, {-1, 1},
+		{0, -1}, {0, 1},
+		{1, -1}, {1, 0}, {1, 1},
+	}
+
+	out := make([][2]int, 0, 8)
+	for _, dir := range dirs {
+		nr, nc := row+dir[0], col+dir[1]
+		if g.InBounds(nr, nc) {
+			out = append(out, [2]int{nr, nc})
+		}
+	}
+	return out
+}
