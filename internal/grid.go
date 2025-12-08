@@ -55,6 +55,10 @@ func (g *Grid) Get(row, col int) rune {
 	return g.Data[row][col]
 }
 
+func (g *Grid) Set(row, col int, value rune) {
+	g.Data[row][col] = value
+}
+
 func (g *Grid) Neighbors8(row, col int) [][2]int {
 	dirs := [][2]int{
 		{-1, -1}, {-1, 0}, {-1, 1},
