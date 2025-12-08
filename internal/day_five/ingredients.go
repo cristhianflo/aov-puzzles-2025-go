@@ -3,6 +3,7 @@ package day_five
 import (
 	"bufio"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -17,9 +18,8 @@ type IngredientRange struct {
 }
 
 type Cafeteria struct {
-	Ranges           []IngredientRange
-	Ingredients      []Ingredient
-	FreshIngredients int
+	Ranges      []IngredientRange
+	Ingredients []Ingredient
 }
 
 func NewCafeteria(path string) (*Cafeteria, error) {
@@ -31,20 +31,20 @@ func NewCafeteria(path string) (*Cafeteria, error) {
 
 	scanner := bufio.NewScanner(file)
 	var sections [][]string
-	var current []string
+	var prevRange []string
 	for scanner.Scan() {
 		line := scanner.Text()
 
 		if line == "" {
-			sections = append(sections, current)
-			current = []string{}
+			sections = append(sections, prevRange)
+			prevRange = []string{}
 			continue
 		}
 
-		current = append(current, line)
+		prevRange = append(prevRange, line)
 	}
 
-	sections = append(sections, current)
+	sections = append(sections, prevRange)
 	if err := scanner.Err(); err != nil {
 		return nil, err
 	}
@@ -81,15 +81,29 @@ func NewCafeteria(path string) (*Cafeteria, error) {
 		}
 	}
 
+	sort.Slice(ranges, func(i, j int) bool {
+		return ranges[i].FirstID < ranges[j].FirstID
+	})
+
 	return &Cafeteria{
-		Ranges:           ranges,
-		Ingredients:      ingredients,
-		FreshIngredients: 0,
+		Ranges:      ranges,
+		Ingredients: ingredients,
 	}, nil
 }
 
-func (c *Cafeteria) CountFreshIngredient() {
-	c.FreshIngredients++
+func (c *Cafeteria) MergeIngredientRanges() {
+	merged := []IngredientRange{c.Ranges[0]}
+
+	for _, currentRange := range c.Ranges[1:] {
+		prevRange := merged[len(merged)-1]
+		if currentRange.FirstID <= prevRange.LastID {
+			merged[len(merged)-1].LastID = max(prevRange.LastID, currentRange.LastID)
+		} else {
+			merged = append(merged, currentRange)
+		}
+
+	}
+	c.Ranges = merged
 }
 
 func (c *Cafeteria) IsFresh(ingredientRange IngredientRange, ingredient Ingredient) bool {
