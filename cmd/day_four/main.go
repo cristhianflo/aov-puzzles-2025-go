@@ -12,7 +12,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	rolls := day_four.PartOne(grid)
+	rolls := day_four.PartTwo(grid)
 
 	fmt.Printf("The total rolls of paper are: %d\n", rolls)
 }
