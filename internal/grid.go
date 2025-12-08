@@ -51,6 +51,10 @@ func (g *Grid) InBounds(row, col int) bool {
 	return row >= 0 && row < g.Rows && col >= 0 && col < g.Cols
 }
 
+func (g *Grid) Get(row, col int) rune {
+	return g.Data[row][col]
+}
+
 func (g *Grid) Neighbors8(row, col int) [][2]int {
 	dirs := [][2]int{
 		{-1, -1}, {-1, 0}, {-1, 1},
