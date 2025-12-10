@@ -12,6 +12,14 @@ type CellType int
 const (
 	CellNumber    CellType = 0
 	CellOperation CellType = 1
+	CellBlank     CellType = 2
+)
+
+type GridType int
+
+const (
+	NormalGrid GridType = 0
+	SingleGrid GridType = 1
 )
 
 type Cell struct {
@@ -26,7 +34,7 @@ type MathGrid struct {
 	Data [][]Cell
 }
 
-func NewMathGrid(path string) (*MathGrid, error) {
+func NewMathGrid(path string, gridDirection GridType) (*MathGrid, error) {
 	file, err := os.Open(path)
 	if err != nil {
 		return nil, err
@@ -34,8 +42,37 @@ func NewMathGrid(path string) (*MathGrid, error) {
 	defer file.Close()
 
 	var data [][]Cell
-
 	scanner := bufio.NewScanner(file)
+	switch gridDirection {
+	case NormalGrid:
+		data, err = createNormalGrid(scanner)
+	case SingleGrid:
+		data, err = createSingleGrid(scanner)
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	if err := scanner.Err(); err != nil {
+		return nil, err
+	}
+
+	rows := len(data)
+	cols := 0
+	if rows > 0 {
+		cols = len(data[0])
+	}
+
+	return &MathGrid{
+		Rows: rows,
+		Cols: cols,
+		Data: data,
+	}, nil
+}
+
+func createNormalGrid(scanner *bufio.Scanner) ([][]Cell, error) {
+	var data [][]Cell
 	for scanner.Scan() {
 		line := []rune(scanner.Text() + "\n")
 		var row []Cell
@@ -65,22 +102,31 @@ func NewMathGrid(path string) (*MathGrid, error) {
 		}
 		data = append(data, row)
 	}
+	return data, nil
+}
 
-	if err := scanner.Err(); err != nil {
-		return nil, err
+func createSingleGrid(scanner *bufio.Scanner) ([][]Cell, error) {
+	var data [][]Cell
+	for scanner.Scan() {
+		var row []Cell
+		line := scanner.Text()
+		for _, char := range line + "\n" {
+
+			var cell Cell
+			if unicode.IsSpace(char) {
+				cell.Type = CellBlank
+			} else if unicode.IsDigit(char) {
+				cell.Type = CellNumber
+				cell.Number = int(char - '0')
+			} else if char == '+' || char == '*' {
+				cell.Type = CellOperation
+				cell.Operator = char
+			}
+			row = append(row, cell)
+		}
+		data = append(data, row)
 	}
-
-	rows := len(data)
-	cols := 0
-	if rows > 0 {
-		cols = len(data[0])
-	}
-
-	return &MathGrid{
-		Rows: rows,
-		Cols: cols,
-		Data: data,
-	}, nil
+	return data, nil
 }
 
 func (g *MathGrid) Col(c int) []Cell {
