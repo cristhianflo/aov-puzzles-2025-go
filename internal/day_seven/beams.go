@@ -7,6 +7,7 @@ import (
 type BeamGrid struct {
 	internal.Grid
 	StartingPoint  [2]int
+	BeamCache      map[[2]int]int
 	SplitterSymbol rune
 	SpaceSymbol    rune
 }
@@ -33,6 +34,7 @@ outer:
 	return &BeamGrid{
 		Grid:           *grid,
 		StartingPoint:  startingPoint,
+		BeamCache:      map[[2]int]int{},
 		SplitterSymbol: '^',
 		SpaceSymbol:    '.',
 	}, nil
@@ -54,4 +56,12 @@ func (bg *BeamGrid) splitBeam(beam [2]int) [][2]int {
 	}
 
 	return result
+}
+
+func (bg *BeamGrid) BeamToLeft(beam [2]int) [2]int {
+	return [2]int{beam[0], beam[1] - 1}
+}
+
+func (bg *BeamGrid) BeamToRight(beam [2]int) [2]int {
+	return [2]int{beam[0], beam[1] + 1}
 }

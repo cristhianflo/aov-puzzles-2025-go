@@ -27,3 +27,36 @@ func PartOne(bg *BeamGrid) int {
 	}
 	return splitAmount
 }
+
+func PartTwo(bg *BeamGrid) int {
+	return ShootBeam(bg, bg.StartingPoint, 0)
+}
+
+func ShootBeam(bg *BeamGrid, beam [2]int, timelines int) int {
+	total := timelines
+	currentRow := beam[0] + 1
+
+	if cache, ok := bg.BeamCache[beam]; ok {
+		return cache
+	}
+	for currentRow < bg.Rows {
+		currentBeam := [2]int{currentRow, beam[1]}
+		if bg.Get(currentBeam[0], currentBeam[1]) == bg.SplitterSymbol {
+			leftBeam := bg.BeamToLeft(currentBeam)
+			rightBeam := bg.BeamToRight(currentBeam)
+			leftResult := ShootBeam(bg, leftBeam, total)
+			rightResult := ShootBeam(bg, rightBeam, total)
+			bg.BeamCache[leftBeam] = leftResult
+			bg.BeamCache[rightBeam] = rightResult
+			total = leftResult + rightResult
+			break
+		} else {
+			currentRow++
+		}
+	}
+
+	if currentRow == bg.Rows {
+		total++
+	}
+	return total
+}

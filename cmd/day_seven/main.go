@@ -11,14 +11,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error: %v", err)
 	}
-	splits := day_seven.PartOne(beamGrid)
-
-	fmt.Printf("The starting point is: %v\n", beamGrid.StartingPoint)
+	splits := day_seven.PartTwo(beamGrid)
 
 	fmt.Printf("The splits of the beam grid is: %d\n", splits)
-
-	// for i := range beamGrid.Rows {
-	// 	row := beamGrid.Row(i)
-	// 	fmt.Println(string(row))
-	// }
 }
